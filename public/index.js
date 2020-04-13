@@ -1,9 +1,10 @@
+const defaultLocale = 'en-US';
+
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
-    const locale = params.has('locale') ? params.get('locale') : 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot?locale=" + locale;
+    var path = "/chatBot?locale=" + extractLocale(params.get('locale'));
 
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
@@ -16,6 +17,18 @@ function requestChatBot(loc) {
     }
     oReq.open("POST", path);
     oReq.send();
+}
+
+function extractLocale(localeParam) {
+    if (!localeParam) {
+        return defaultLocale;
+    }
+    else if (localeParam === 'autodetect') {
+        return navigator.language;
+    }
+    else {
+        return localeParam;
+    }
 }
 
 function chatRequested() {
